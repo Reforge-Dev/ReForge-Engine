@@ -97,3 +97,38 @@ scripts/update-engine.mjs
 
 - Entity type ids, tags, variable ids, rule ids, scene ids: `kebab-case` (variables may be `camelCase`; pick one per game and stay consistent).
 - Asset paths are relative to the game folder.
+
+## 7. `behaviors.manifest.json` format
+
+Generated from the engine registry; the editor builds its dropdowns and forms from it. Never hand-edit.
+
+```jsonc
+{
+  "engineVersion": "0.1.0",
+  "events":     [ { "name": "collide", "label": "Two things touch", "params": [ /* Param[] */ ] } ],
+  "conditions": [ { "name": "varLt",   "label": "Variable is less than", "params": [ /* Param[] */ ] } ],
+  "actions":    [ { "name": "addVar",  "label": "Add to variable", "params": [ /* Param[] */ ] } ],
+  "components": [ { "name": "health",  "label": "Health", "params": [ /* Param[] */ ] } ],
+  "widgets":    [ { "name": "bar",     "label": "Progress bar", "params": [ /* Param[] */ ] } ]
+}
+```
+
+A `Param`:
+
+```jsonc
+{
+  "name": "by",                 // key used in game.json
+  "label": "Amount",
+  "type": "number",             // number | string | boolean | select | color | entityType | tag | variable | scene | asset | target
+  "required": true,
+  "default": 1,
+  "min": -1000, "max": 1000,    // numbers only (optional)
+  "options": ["self", "other"], // select / target only
+  "help": "How much to add (negative to subtract)."
+}
+```
+
+`target` params accept `"self"`, `"other"`, a tag (`"tag:enemy"`), or an entity type id.
+Adding a behavior = register it once in the engine registry; it then appears in this manifest, in `game.schema.json`, in `docs/behaviors.md`, and in the editor, with no other code changes.
+
+Additive note: `collider` also accepts an optional `"solid": true` (blocks movement).
