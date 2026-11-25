@@ -1,0 +1,150 @@
+{
+  "meta": {
+    "title": "Crypt of the Reforged",
+    "version": 1,
+    "startScene": "crypt",
+    "theme": "crypt"
+  },
+  "variables": {
+    "hp": 10
+  },
+  "entityTypes": {
+    "player": {
+      "tags": [
+        "player"
+      ],
+      "components": {
+        "shape": {
+          "type": "rect",
+          "color": "#65caba"
+        },
+        "collider": {
+          "w": 16,
+          "h": 16
+        },
+        "mover": {
+          "mode": "topdown",
+          "speed": 90
+        }
+      }
+    },
+    "wall": {
+      "tags": [
+        "wall"
+      ],
+      "components": {
+        "collider": {
+          "w": 24,
+          "h": 24,
+          "solid": true
+        }
+      }
+    },
+    "door": {
+      "tags": [
+        "door"
+      ],
+      "components": {
+        "collider": {
+          "w": 18,
+          "h": 30,
+          "solid": true
+        }
+      }
+    },
+    "key": {
+      "tags": [
+        "key"
+      ],
+      "components": {
+        "collider": {
+          "w": 12,
+          "h": 12
+        }
+      }
+    }
+  },
+  "scenes": [
+    {
+      "id": "crypt",
+      "size": [
+        320,
+        240
+      ],
+      "entities": [
+        {
+          "type": "wall",
+          "x": 72,
+          "y": 72,
+          "components": {
+            "collider": {
+              "w": 176,
+              "h": 16
+            }
+          }
+        },
+        {
+          "type": "wall",
+          "x": 72,
+          "y": 88,
+          "components": {
+            "collider": {
+              "w": 16,
+              "h": 96
+            }
+          }
+        },
+        {
+          "type": "wall",
+          "x": 88,
+          "y": 168,
+          "components": {
+            "collider": {
+              "w": 160,
+              "h": 16
+            }
+          }
+        },
+        {
+          "type": "wall",
+          "x": 232,
+          "y": 88,
+          "components": {
+            "collider": {
+              "w": 16,
+              "h": 29
+            }
+          }
+        },
+        {
+          "type": "wall",
+          "x": 232,
+          "y": 147,
+          "components": {
+            "collider": {
+              "w": 16,
+              "h": 21
+            }
+          }
+        },
+        {
+          "type": "player",
+          "x": 111,
+          "y": 124
+        },
+        {
+          "type": "key",
+          "x": 179,
+          "y": 106
+        },
+        {
+          "type": "door",
+          "x": 231,
+          "y": 117
+        }
+      ]
+    }
+  ],
+  "rules": [],
+  "ui": []
+}
