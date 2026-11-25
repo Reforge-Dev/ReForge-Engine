@@ -65,3 +65,29 @@ h2 { font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
 @media (max-width: 490px) {
   .top { flex-wrap: wrap; padding: 12px 0; }
 }
+
+.scene-tabs, .scene-form, .selection-tools { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; }
+.scene-tabs, .scene-form { border-bottom: 1px solid var(--border); }
+.scene-form { align-items: center; }
+.scene-form [role=alert] { color: #ffc3d2; }
+.selection-tools { padding-inline: 0; }
+.history { flex-wrap: wrap; align-items: center; }
+.history label { color: var(--muted); font-size: 12px; }
+.history select, .scene-form input { margin-left: 5px; }
+.scene-tabs button, .scene-form button, .selection-tools button, .types button, .instances button, .history select {
+  font: inherit; font-size: 12px; color: inherit; background: transparent; border: 1px solid var(--border);
+  border-radius: 5px; padding: 4px 7px; cursor: pointer;
+}
+.types li, .instances li { padding: 3px 0; }
+.types button, .instances button { display: flex; align-items: baseline; gap: 8px; text-align: left; width: 100%; border-color: transparent; }
+.instances button { justify-content: space-between; }
+.selection-tools button:disabled { opacity: .5; cursor: default; }
+button[aria-pressed=true], button[aria-current=true] { background: #4a3b67; border-color: var(--accent); }
+.placement-hint { padding: 6px 14px; color: var(--accent); font-size: 12px; }
+.viewport { display: block; min-height: 0; height: clamp(280px, 65vh, 650px); overflow: auto; touch-action: none; }
+.scene-grid { margin-inline: auto; }
+.viewport.panning, .viewport.panning .entity { cursor: grab; }
+.viewport.panning:active, .viewport.panning:active .entity { cursor: grabbing; }
+.viewport.placing, .viewport.placing .entity { cursor: crosshair; }
+.entity.selected { outline: 2px solid var(--accent); outline-offset: 1px; }
+.marquee { position: absolute; pointer-events: none; border: 1px solid var(--accent); background: #c7b3fb33; z-index: 2; }

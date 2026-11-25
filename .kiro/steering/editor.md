@@ -15,3 +15,4 @@ Andrew owns `editor/` and authors the Dungeon game in its own repository using t
 - Keep the editor app and fixtures under `editor/`. Engine implementation belongs to Muhammad. Author Dungeon as game data plus assets and the agreed bootstrap.
 - Review requirements, design, and tasks in order before implementation. Track what was actually done with Kiro in `KIRO_LOG.md` after each phase.
 - After each meaningful change, run the relevant checks, make a focused commit, and push the working branch for review.
+- Keep canvas input, editor UI state, and document commands behind clear module boundaries. Use composition and encapsulation. Keep the game document plain JSON and document changes in pure commands, as required by the editor spec.
