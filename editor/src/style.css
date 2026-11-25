@@ -53,3 +53,9 @@ h2 { font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
   .filename { display: none; }
   .viewport { min-height: 0; }
 }
+
+.history { display: flex; gap: 8px; padding: 8px 15px; border-bottom: 1px solid var(--border); }
+.history button { font: inherit; font-size: 12px; background: #332a49; color: #e8dfff; border: 1px solid var(--border); border-radius: 5px; padding: 4px 10px; cursor: pointer; }
+.history button:disabled { background: transparent; color: var(--muted); opacity: .65; cursor: default; }
+.entity { cursor: grab; touch-action: none; user-select: none; }
+.entity.dragging { z-index: 1; cursor: grabbing; outline: 2px solid white; }

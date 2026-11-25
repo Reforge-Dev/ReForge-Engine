@@ -1,24 +1,40 @@
-import { StrictMode, useRef, useState } from 'react'
+import { StrictMode, useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import sample from '../fixtures/game.json'
 import { parseGame } from './document'
 import { entityColor, SceneView } from './SceneView'
+import { createHistory, moveEntity, redo, undo } from './history'
 import './style.css'
 
 function App() {
-  const [game, setGame] = useState(() => parseGame(JSON.stringify(sample)))
+  const [history, setHistory] = useState(() => createHistory(parseGame(JSON.stringify(sample))))
+  const { game } = history
   const [filename, setFilename] = useState('Sample game')
   const [error, setError] = useState('')
   const request = useRef(0)
-  const scene = game.scenes.find(({ id }) => id === game.meta.startScene)!
+  const sceneIndex = game.scenes.findIndex(({ id }) => id === game.meta.startScene)
+  const scene = game.scenes[sceneIndex]
   const types = Object.keys(game.entityTypes)
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if ((!event.ctrlKey && !event.metaKey) || event.altKey) return
+      if (event.target instanceof HTMLElement && event.target.matches('input, textarea, [contenteditable]')) return
+      const key = event.key.toLowerCase()
+      if (key !== 'z' && key !== 'y') return
+      event.preventDefault()
+      setHistory(key === 'y' || event.shiftKey ? redo : undo)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
 
   async function openGame(file: File) {
     const current = ++request.current
     try {
       const nextGame = parseGame(await file.text())
       if (current !== request.current) return
-      setGame(nextGame)
+      setHistory(createHistory(nextGame))
       setFilename(file.name)
       setError('')
     } catch (failure) {
@@ -55,7 +71,13 @@ function App() {
         </aside>
         <section className="panel scene" aria-label="Starting scene">
           <div className="scene-title"><h2>{scene.id}</h2><span className="muted">{scene.size.join(' × ')}</span></div>
-          <SceneView scene={scene} types={game.entityTypes} />
+          <div className="history" role="group" aria-label="Edit history">
+            <button type="button" disabled={!history.past.length} onClick={() => setHistory(undo)}>Undo</button>
+            <button type="button" disabled={!history.future.length} onClick={() => setHistory(redo)}>Redo</button>
+          </div>
+          <SceneView scene={scene} types={game.entityTypes} onMove={(index, position) => {
+            setHistory((current) => current.game === game ? moveEntity(current, sceneIndex, index, position) : current)
+          }} />
         </section>
         <aside className="panel details" aria-label="Scene details">
           <h2>{game.meta.title}</h2>

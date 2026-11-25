@@ -5,7 +5,7 @@
 ## First working slice
 
 - [x] **1. Open and display a sample game** (E1, E7, E12). Set up the React, strict TypeScript, Vite, and Vitest workspace. Add a Contract §1 sample game and minimal document-loading checks. Build the editor shell and draw the active scene with a grid and entity rectangles. **Check:** Open an uploaded `game.json` and see its entities. A malformed file shows an inline error and preserves the open document.
-- [ ] **2. Drag one entity and track the edit** (E2, E8, E12). Convert pointer positions to scene coordinates, preview the drag, and commit one pure move command per gesture with Immer patches. Add undo and redo for the move. **Check:** Drag an entity, then undo and redo. Only that instance's coordinates change, and one drag produces one undo entry.
+- [x] **2. Drag one entity and track the edit** (E2, E8, E12). Convert pointer positions to scene coordinates, preview the drag, and commit one pure move command per gesture with Immer patches. Add undo and redo for the move. **Check:** Drag an entity, then undo and redo. Only that instance's coordinates change, and one drag produces one undo entry.
 - [ ] **3. Save and reopen the edited game** (E7). Add JSON download and upload round-trip support. Preserve contract fields the editor does not expose. **Check:** Download the edited document, reopen it, and compare it to the prior document with only the intended coordinate change. Add a fast-check round-trip property.
 
 ## Authoring tools
