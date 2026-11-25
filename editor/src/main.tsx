@@ -4,12 +4,13 @@ import sample from '../fixtures/game.json'
 import { parseGame } from './document'
 import { entityColor, SceneView } from './SceneView'
 import { createHistory, moveEntity, redo, undo } from './history'
+import { downloadGame } from './game-file'
 import './style.css'
 
 function App() {
   const [history, setHistory] = useState(() => createHistory(parseGame(JSON.stringify(sample))))
   const { game } = history
-  const [filename, setFilename] = useState('Sample game')
+  const [filename, setFilename] = useState('game.json')
   const [error, setError] = useState('')
   const request = useRef(0)
   const sceneIndex = game.scenes.findIndex(({ id }) => id === game.meta.startScene)
@@ -49,6 +50,7 @@ function App() {
         <div className="brand"><span className="mark" aria-hidden="true">R</span><h1>ReForge Editor</h1></div>
         <div className="file">
           <span className="filename">{filename}</span>
+          <button type="button" className="save" onClick={() => downloadGame(game, filename)}>Save game</button>
           <label className="open">
             Open game
             <input type="file" accept=".json,application/json" onChange={(event) => {

@@ -59,3 +59,9 @@ h2 { font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
 .history button:disabled { background: transparent; color: var(--muted); opacity: .65; cursor: default; }
 .entity { cursor: grab; touch-action: none; user-select: none; }
 .entity.dragging { z-index: 1; cursor: grabbing; outline: 2px solid white; }
+
+.save { flex-shrink: 0; font: inherit; font-size: 13px; font-weight: 700; color: var(--accent); background: #332a49; border: 1px solid var(--border); border-radius: 7px; padding: 7px 13px; cursor: pointer; }
+.save:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+@media (max-width: 490px) {
+  .top { flex-wrap: wrap; padding: 12px 0; }
+}
