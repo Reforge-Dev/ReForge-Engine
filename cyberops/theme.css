@@ -1,0 +1,10 @@
+:root {
+  --ink: #0c0d0b;
+  --bone: #e7e4d8;
+  --ember: #e07a3d;
+  --ghost: #8aa384;
+  --line: #2a2c26;
+  --danger: #c4493a;
+  --font-ui: sans-serif;
+  --font-mono: ui-monospace, monospace;
+}
