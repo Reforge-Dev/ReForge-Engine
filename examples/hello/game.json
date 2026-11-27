@@ -1,0 +1,50 @@
+{
+  "meta": { "title": "Hello ReForge", "version": 1, "startScene": "main", "background": "#14161a" },
+  "variables": {},
+  "entityTypes": {
+    "player": {
+      "tags": ["player"],
+      "components": {
+        "shape": { "kind": "rect", "color": "#e7e4d8", "w": 12, "h": 12 },
+        "collider": { "w": 12, "h": 12 },
+        "mover": { "mode": "topdown", "speed": 90 }
+      }
+    },
+    "wall": {
+      "tags": ["wall"],
+      "components": {
+        "shape": { "kind": "rect", "color": "#4a4d57", "w": 16, "h": 16 },
+        "collider": { "w": 16, "h": 16, "solid": true }
+      }
+    },
+    "moon": {
+      "components": {
+        "shape": { "kind": "circle", "color": "#8aa384", "w": 10, "h": 10 }
+      }
+    }
+  },
+  "scenes": [
+    {
+      "id": "main",
+      "size": [320, 240],
+      "entities": [
+        { "type": "player", "x": 60, "y": 120 },
+        {
+          "type": "wall",
+          "x": 160,
+          "y": 100,
+          "components": { "shape": { "w": 16, "h": 80 }, "collider": { "w": 16, "h": 80 } }
+        },
+        {
+          "type": "wall",
+          "x": 240,
+          "y": 170,
+          "components": { "shape": { "w": 80, "h": 16 }, "collider": { "w": 80, "h": 16 } }
+        },
+        { "type": "moon", "x": 280, "y": 40 }
+      ]
+    }
+  ],
+  "rules": [],
+  "ui": []
+}
