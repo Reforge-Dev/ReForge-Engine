@@ -132,3 +132,20 @@ A `Param`:
 Adding a behavior = register it once in the engine registry; it then appears in this manifest, in `game.schema.json`, in `docs/behaviors.md`, and in the editor, with no other code changes.
 
 Additive note: `collider` also accepts an optional `"solid": true` (blocks movement).
+
+## 8. Additive v0.1 notes (engine 0.1.0)
+
+Everything here is additive; nothing in §1–§7 changed meaning.
+
+- **Instances** may carry `id` (becomes the entity id; must be unique in the scene) and any extra keys (`name`, `links`, `kind`, ...). Extra keys become entity `props`. An entity type may also declare `props` defaults.
+- **`tables`** (top level): `{ "tableName": [ { ...row } ] }`, read by `spawnFromTable` and `$` references.
+- **`shape`** component: `{ "kind": "rect" | "circle", "color", "w", "h", "layer" }`. **`sprite`** also takes `cols`, `rows`, `frame`, `layer`. **`collider`** takes `solid` and `offset: [x, y]`.
+- **Scene** may have `background` (a CSS color); `meta` may have `background` and `camera: { follow: <tag>, view: [w, h] }`.
+- **`$` references** in any action or condition param: `$var.name`, `$self.field`, `$other.field`, `$selected.field`, `$timer.key`, `$tick`, `$scene`. Entity fields are `id`, `type`, `x`, `y`, `tags`, then `props`, then components (dotted paths allowed, e.g. `$self.row.rate`). In `showText`/`log` text, `{name}` and `{self.field}` are interpolated.
+- **Conditions** accept `"not": true` to invert them.
+- **Targets** (`target`, `of`, `a`, `b` params) accept `self`, `other`, `selected`, an entity id, an entity type id, `tag:x`, or a bare tag.
+- **New behaviors:** events: none. Conditions: `compare`, `hasTag`, `hasSelection`. Actions: `takeItem`, `addTag`, `removeTag`, `selectEntity`, `clearSelection`, `forEach` (nested `if` / `then`), `stopTimer`, `spawnFromTable`. `startTimer` takes `target`, `repeat`, `data`. `log` takes `to`, `lines`, `pick`.
+- **Timers** are ticks internally (60/s). A timer with a `target` fires `timer` with `self` = that entity; its `data` is `$timer.*`.
+- **`changeScene`** applies immediately inside a rule, so later actions in the same rule see the new scene.
+- **`panel` / `modal`** are open by default unless `"hidden": true`; `openPanel` / `closePanel` toggle them.
+- **Game events** (`game.on`): `win`, `lose`, `sceneChanged`, `error`, plus `sound` and `text` from `playSound` / `showText`.
