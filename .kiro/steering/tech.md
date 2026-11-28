@@ -17,8 +17,8 @@ inclusion: always
 - `pnpm build`: `vite build`, then `gen` (manifest, schema, docs), then the 60 KB gzip size check.
 - `pnpm -F engine gen`: regenerate `dist/behaviors.manifest.json`, `dist/game.schema.json`, `docs/behaviors.md`.
 - `pnpm test` (all), `pnpm -F engine test` (engine only).
-- `pnpm typecheck`, `pnpm lint` (root script; `pnpm -r lint` finds nothing), `pnpm format`.
-- Before every commit: `pnpm -r typecheck && pnpm lint && pnpm -r test && pnpm --filter engine build`.
+- `pnpm typecheck`, `pnpm lint`, `pnpm format`. `pnpm lint` (root `package.json`) is the only lint definition. CI, the save hook and the pre-commit check all call it. Do not add another.
+- Pre-commit check (run before every commit): `pnpm -r typecheck && pnpm lint && pnpm -r test && pnpm --filter engine build`.
 
 ## Code style
 

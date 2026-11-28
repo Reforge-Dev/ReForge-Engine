@@ -57,7 +57,7 @@ Shipped commits:
 
 - [ ] **T24 Coverage gaps in `sim.test.ts`.** R9.5, R9.12, R7.5, R18.4, R17.8. Add: collision enter fires once and again after separating; `damage` to 0 queues `died` once; camera follow clamps to the scene; `openPanel` and `closePanel` change `getState().open`; `selectEntity` marks, replaces and clears on destroy.
 - [ ] **T25 Performance benchmark.** R14.4. `engine/scripts/bench.ts`, run with `pnpm -F engine bench`, no new runtime dependency. 500 entities (movers, colliders, a rule on `tick`), 60 ticks, report the worst and mean ms per tick. Target: under 16 ms per tick on a laptop.
-- [ ] **T26 Lint script in the engine package.** R12.4. `pnpm -r lint` currently finds no script; lint only runs from the root. Add `"lint"` to `engine/package.json` or change the gate to `pnpm lint`.
+- [x] **T26 One lint command.** R12.4. `pnpm lint` in the root `package.json` is the only definition. CI, the release workflow, the `ts-typecheck-lint` save hook and the pre-commit check all call it. No per-package lint script, so there is no second definition.
 
 ### Kiro tooling (this session)
 

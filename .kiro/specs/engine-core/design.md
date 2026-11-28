@@ -204,7 +204,7 @@ Places where the original requirements, the team brief or the steering docs disa
 6. **`setScene` timing.** The draft said "after the current tick". `setScene` and `changeScene` apply immediately.
 7. **`createSimulation`.** The draft did not say it throws. It throws on invalid games. `createGame` never throws.
 8. **Module dependencies.** `structure.md` said `ui` and `io` depend on `core`, and `schema` and `core` depend on nothing. Actually `ui`, `io` and `schema` depend only on `types.ts`. `core/game.ts` depends on `io`, `ui` and `schema`. `behaviors/index.ts` depends on `ui` for the widget definitions.
-9. **Lint scope.** `pnpm -r lint` finds no script. Lint is defined at the repo root (`pnpm lint`) and covers `engine/src` only.
+9. **Lint scope (resolved).** `pnpm -r lint` finds no script because lint is a root script. Decision: `pnpm lint` is the one lint command, used by CI, the release workflow, the save hook and the pre-commit check.
 10. **CI and release Node versions.** `ci.yml` uses Node 20 and `release.yml` uses Node 22.
 11. **`kind` on instances.** It is stored in `props` and not drawn (R8.9).
 12. **Collision exit.** The Simulation tracks pairs between ticks but emits no exit event. Only `collide` on entering.

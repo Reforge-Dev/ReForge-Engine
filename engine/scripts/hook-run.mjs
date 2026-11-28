@@ -46,9 +46,6 @@ function run(cmd, args, opts = {}) {
   return { code: r.status ?? 1, out: `${r.stdout ?? ""}${r.stderr ?? ""}`.trim() };
 }
 
-const node = process.execPath;
-const bin = (pkg, file) => join(root, "node_modules", pkg, file);
-
 function finish(ok, message) {
   log(`${ok ? "PASS" : "FAIL"} ${message.split("\n")[0]}`);
   process.stdout.write(`${message}\n`);
@@ -77,18 +74,18 @@ if (mode === "gen") {
   finish(true, `Behavior docs and manifest are up to date and staged.\n${notes.join("\n")}`.trim());
 } else if (mode === "ts") {
   const file = savedFile(/engine[\\/]src[\\/].*\.ts$/);
-  const rel = file ? relative(root, resolve(root, file)) : undefined;
-  const results = [];
+  const rel = file ? relative(root, resolve(root, file)) : "(unknown file)";
   const tsc = run("pnpm", ["--filter", "engine", "typecheck"], { shell: true });
-  results.push(tsc.code === 0 ? "typecheck: ok" : `typecheck: FAILED\n${tsc.out}`);
-  if (rel) {
-    const lint = run(node, [bin("eslint", "bin/eslint.js"), rel]);
-    results.push(lint.code === 0 ? `lint ${rel}: ok` : `lint ${rel}: FAILED\n${lint.out}`);
-    const fmt = run(node, [bin("prettier", "bin/prettier.cjs"), "--check", rel]);
-    results.push(fmt.code === 0 ? `format ${rel}: ok` : `format ${rel}: FAILED\n${fmt.out}`);
-    finish(tsc.code === 0 && lint.code === 0 && fmt.code === 0, results.join("\n"));
-  }
-  finish(tsc.code === 0, `${results.join("\n")}\n(no saved .ts path found in the hook input; linted nothing)`);
+  // Same command as CI and the pre-commit check: the single lint definition in the root package.json.
+  const lint = run("pnpm", ["lint"], { shell: true });
+  finish(
+    tsc.code === 0 && lint.code === 0,
+    [
+      `saved ${rel}`,
+      tsc.code === 0 ? "typecheck: ok" : `typecheck: FAILED\n${tsc.out}`,
+      lint.code === 0 ? "pnpm lint: ok" : `pnpm lint: FAILED\n${lint.out}`,
+    ].join("\n"),
+  );
 } else if (mode === "game") {
   const file = savedFile(/game\.json$/);
   const targets = file ? [resolve(root, file)] : findGames(root);
