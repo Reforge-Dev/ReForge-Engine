@@ -208,3 +208,4 @@ Places where the original requirements, the team brief or the steering docs disa
 10. **CI and release Node versions.** `ci.yml` uses Node 20 and `release.yml` uses Node 22.
 11. **`kind` on instances.** It is stored in `props` and not drawn (R8.9).
 12. **Collision exit.** The Simulation tracks pairs between ticks but emits no exit event. Only `collide` on entering.
+13. **Id reuse (fixed in cd21853).** The World checked only live ids, so a generated id could equal the id of an entity removed earlier. Found by property P2 (shrunk case: add with id -1, clear, add type ). The World now records every issued id and esetIds() clears the record.

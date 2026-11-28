@@ -47,11 +47,11 @@ Shipped commits:
 
 ### Property tests (Kiro session, step 4)
 
-- [ ] **T19 P1 determinism.** R2.7. `core/sim.prop.test.ts`.
-- [ ] **T20 P2, P3 world ids and pending removal.** R4. `core/world.prop.test.ts`.
-- [ ] **T21 P4, P5 collision.** R9. `core/geometry.prop.test.ts`.
-- [ ] **T22 P6 validator mutations.** R10. `schema/mutation.prop.test.ts`.
-- [ ] **T23 P7 manifest and docs freshness.** R16. `behaviors/manifest.prop.test.ts`, `scripts/docs.ts`.
+- [x] **T19 P1 determinism.** R2.7. `core/sim.prop.test.ts`.
+- [x] **T20 P2, P3 world ids and pending removal.** R4. `core/world.prop.test.ts`. Found a real bug (generated id repeated a removed id); fixed in the commit that adds this test.
+- [x] **T21 P4, P5 collision.** R9. `core/geometry.prop.test.ts`.
+- [x] **T22 P6 validator mutations.** R10. `schema/mutation.prop.test.ts`.
+- [x] **T23 P7 manifest and docs freshness.** R16. `behaviors/manifest.prop.test.ts`, `scripts/docs.ts`.
 
 ### Remaining engine work
 
