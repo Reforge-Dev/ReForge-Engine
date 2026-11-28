@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Regenerate behavior docs and fail if unstaged",
+      "trigger": "PostFileSave",
+      "description": "On save of engine/src/behaviors/*.ts: run `pnpm --filter engine gen`, then fail if docs/behaviors.md changed and is not staged. The manifest is a build output in dist/ and is only reported.",
+      "matcher": "engine[\\\\/]src[\\\\/]behaviors[\\\\/][^\\\\/.]+\\.ts$",
+      "action": {
+        "type": "command",
+        "command": "node engine/scripts/hook-run.mjs gen",
+        "timeout": 120
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Validate game.json on save",
+      "trigger": "PostFileSave",
+      "description": "On save of any game.json: run validateGame and print each error with its path in plain English.",
+      "matcher": "game\\.json$",
+      "action": {
+        "type": "command",
+        "command": "node engine/scripts/hook-run.mjs game",
+        "timeout": 120
+      }
+    }
+  ]
+}
