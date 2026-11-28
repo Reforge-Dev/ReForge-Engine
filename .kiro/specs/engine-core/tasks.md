@@ -63,4 +63,4 @@ Shipped commits:
 
 - [x] **T27 Hooks.** `.kiro/hooks/`: generated-docs check on behavior saves, typecheck and lint on `.ts` saves, validate `game.json` on save.
 - [x] **T28 Steering update.** `structure.md`, `tech.md`, `behavior-authoring.md`.
-- [ ] **T29 `KIRO_LOG.md` entry.**
+- [x] **T29 `KIRO_LOG.md` entry.**
