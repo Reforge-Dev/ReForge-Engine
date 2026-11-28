@@ -1,0 +1,220 @@
+/* ReForge default widget styles. Re-skin by setting --rf-* (or --ink, --bone, ...) in theme.css. */
+.rf-root,
+.rf-ui {
+  --c-ink: var(--rf-ink, var(--ink, #0c0d0b));
+  --c-bone: var(--rf-bone, var(--bone, #e7e4d8));
+  --c-ember: var(--rf-ember, var(--ember, #e07a3d));
+  --c-ghost: var(--rf-ghost, var(--ghost, #8aa384));
+  --c-line: var(--rf-line, var(--line, #2a2c26));
+  --c-danger: var(--rf-danger, var(--danger, #c4493a));
+  --c-ui: var(--rf-font-ui, var(--font-ui, system-ui, sans-serif));
+  --c-mono: var(--rf-font-mono, var(--font-mono, ui-monospace, monospace));
+}
+
+.rf-root {
+  position: relative;
+  display: block;
+  background: var(--c-ink);
+}
+.rf-root canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.rf-ui {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  color: var(--c-bone);
+  font: 14px/1.4 var(--c-ui);
+}
+.rf-ui [hidden] {
+  display: none !important;
+}
+
+/* Slots: widgets sharing a position stack inside one slot. */
+.rf-slot {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  max-width: 60%;
+  max-height: 100%;
+  box-sizing: border-box;
+}
+.rf-pos-top-left {
+  top: 0;
+  left: 0;
+}
+.rf-pos-top {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.rf-pos-top-right {
+  top: 0;
+  right: 0;
+  align-items: flex-end;
+}
+.rf-pos-left {
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+.rf-pos-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  align-items: center;
+  text-align: center;
+}
+.rf-pos-right {
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  align-items: flex-end;
+}
+.rf-pos-bottom-left {
+  bottom: 0;
+  left: 0;
+}
+.rf-pos-bottom {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.rf-pos-bottom-right {
+  bottom: 0;
+  right: 0;
+  align-items: flex-end;
+}
+
+.rf-text,
+.rf-bar-label {
+  padding: 2px 0;
+}
+
+/* Bar */
+.rf-bar {
+  min-width: 180px;
+}
+.rf-bar-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.rf-bar-track {
+  height: 10px;
+  border: 1px solid var(--c-line);
+  background: var(--c-ink);
+}
+.rf-bar-fill {
+  height: 100%;
+  width: 0;
+  background: var(--c-ember);
+}
+
+/* Button */
+.rf-button {
+  pointer-events: auto;
+  padding: 8px 14px;
+  border: 1px solid var(--c-line);
+  border-radius: 0;
+  background: var(--c-ink);
+  color: var(--c-bone);
+  font: inherit;
+  cursor: pointer;
+}
+.rf-button:hover {
+  background: var(--c-ember);
+  border-color: var(--c-ember);
+  color: var(--c-ink);
+}
+.rf-button:focus-visible {
+  outline: 2px solid var(--c-bone);
+  outline-offset: 2px;
+}
+.rf-button:active {
+  background: var(--c-bone);
+  border-color: var(--c-bone);
+  color: var(--c-ink);
+}
+
+/* Panel and modal */
+.rf-panel,
+.rf-modal-box,
+.rf-list,
+.rf-table {
+  pointer-events: auto;
+  box-sizing: border-box;
+  border: 1px solid var(--c-line);
+  background: var(--c-ink);
+  padding: 10px 12px;
+}
+.rf-modal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  background: rgb(0 0 0 / 70%);
+}
+.rf-modal-box {
+  min-width: 260px;
+  max-width: 80%;
+  max-height: 80%;
+  overflow: auto;
+}
+.rf-title {
+  margin-bottom: 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-ghost);
+}
+.rf-body {
+  margin: 0 0 8px;
+}
+
+/* List / log */
+.rf-list {
+  width: 280px;
+  max-width: 100%;
+}
+.rf-log-lines {
+  max-height: 260px;
+  overflow-y: auto;
+  font: 12px/1.45 var(--c-mono);
+}
+.rf-log-line {
+  padding: 1px 0;
+  border-bottom: 1px solid var(--c-line);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Table */
+.rf-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--c-line);
+}
+.rf-key {
+  color: var(--c-ghost);
+}
+.rf-value {
+  font-family: var(--c-mono);
+}

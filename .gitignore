@@ -1,0 +1,7 @@
+# NOTE: .kiro/ must NEVER be listed here (Devpost requires it in the repo).
+node_modules/
+dist/
+coverage/
+*.log
+.DS_Store
+.vite/

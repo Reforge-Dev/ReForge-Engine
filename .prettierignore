@@ -1,0 +1,14 @@
+dist
+coverage
+pnpm-lock.yaml
+docs/behaviors.md
+*.schema.json
+*.manifest.json
+dungeon-crawler
+cyberops
+editor
+docs
+README.md
+KIRO_LOG.md
+.kiro
+scripts

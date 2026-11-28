@@ -1,0 +1,20 @@
+{
+  "name": "engine",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config vite.dev.config.ts",
+    "build": "vite build && vite-node scripts/gen.ts && node scripts/check-size.mjs",
+    "gen": "vite-node scripts/gen.ts",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "fast-check": "^3.22.0",
+    "happy-dom": "^21.0.4",
+    "vite": "^5.4.0",
+    "vite-node": "^2.1.0",
+    "vitest": "^2.1.0"
+  }
+}

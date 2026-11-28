@@ -1,0 +1,1339 @@
+{
+  "meta": {
+    "title": "Ghost in the Machine",
+    "version": 1,
+    "startScene": "title",
+    "theme": "cyberops"
+  },
+  "variables": {
+    "budget": 560,
+    "breach": 4,
+    "clock": 0,
+    "uptime": 100,
+    "stopped": 0,
+    "spawned": 0,
+    "wrong": 0,
+    "threatLevel": 0
+  },
+  "tables": {
+    "responses": [
+      {
+        "id": "isolate",
+        "label": "Isolate",
+        "detail": "Cut that host off the floor",
+        "cost": 40,
+        "duration": 6
+      },
+      {
+        "id": "block",
+        "label": "Block address",
+        "detail": "Drop the address that is hammering in",
+        "cost": 30,
+        "duration": 5
+      },
+      {
+        "id": "patch",
+        "label": "Patch edge",
+        "detail": "Push the rate-limit rules",
+        "cost": 80,
+        "duration": 9
+      },
+      {
+        "id": "scan",
+        "label": "Deep scan",
+        "detail": "Sever a quiet outbound channel",
+        "cost": 60,
+        "duration": 8
+      },
+      {
+        "id": "restore",
+        "label": "Restore",
+        "detail": "Roll files back from the clean backup",
+        "cost": 120,
+        "duration": 11
+      }
+    ],
+    "incidents": [
+      {
+        "id": "phishing",
+        "name": "Phishing",
+        "weight": 3,
+        "hosts": [
+          "ws-a",
+          "ws-b",
+          "ws-c"
+        ],
+        "correct": "isolate",
+        "breachPerSec": 0.32,
+        "wrongPenalty": 10,
+        "slowPenalty": 6,
+        "failPenalty": 12,
+        "slowAfter": 24,
+        "failAfter": 46,
+        "logs": [
+          [
+            "MAIL  gateway accepted payroll-adjustment.lnk for j.okonkwo",
+            "EDR  a desk process read the browser cookie store",
+            "DNS  that desk queried a lookalike of the company domain"
+          ],
+          [
+            "USER  opened a shared doc titled urgent voicemail",
+            "AUTH  a second session appeared on the same desk four minutes later",
+            "PROXY  the desk posted credentials to an external form"
+          ],
+          [
+            "CHAT  link preview from an outside tenant, clicked",
+            "EDR  unusual child process under the mail client",
+            "NET  desk beaconing out every 40 seconds"
+          ]
+        ]
+      },
+      {
+        "id": "ransomware",
+        "name": "Ransomware",
+        "weight": 2,
+        "hosts": [
+          "database",
+          "web",
+          "backup"
+        ],
+        "correct": "restore",
+        "breachPerSec": 0.48,
+        "wrongPenalty": 16,
+        "slowPenalty": 10,
+        "failPenalty": 16,
+        "slowAfter": 22,
+        "failAfter": 44,
+        "logs": [
+          [
+            "FS  share-finance: 1,840 files renamed to .wraith",
+            "NOTE  dropped on the volume: THE VAULT IS HAUNTED",
+            "BKUP  last clean snapshot is still sealed"
+          ],
+          [
+            "AV  encryption burst on the data volume, shadow copies deleted",
+            "SMB  a ransom note is being written across the mapped drive",
+            "BKUP  the offline copy was not touched"
+          ]
+        ]
+      },
+      {
+        "id": "brute-force",
+        "name": "Brute force",
+        "weight": 3,
+        "hosts": [
+          "firewall",
+          "edge-router",
+          "web"
+        ],
+        "correct": "block",
+        "breachPerSec": 0.3,
+        "wrongPenalty": 9,
+        "slowPenalty": 6,
+        "failPenalty": 11,
+        "slowAfter": 24,
+        "failAfter": 46,
+        "logs": [
+          [
+            "AUTH  612 failures on ssh from 203.0.113.66 in four minutes",
+            "VPN  the same address is trying the break-glass account",
+            "HOST  no new binary on disk"
+          ],
+          [
+            "WAF  credential stuffing against /login from one address",
+            "AUTH  staff lockouts are spreading",
+            "NET  source 198.51.100.23, no payload observed"
+          ]
+        ]
+      },
+      {
+        "id": "ddos",
+        "name": "Flood",
+        "weight": 2,
+        "hosts": [
+          "edge-router",
+          "firewall"
+        ],
+        "correct": "patch",
+        "breachPerSec": 0.4,
+        "wrongPenalty": 13,
+        "slowPenalty": 8,
+        "failPenalty": 14,
+        "slowAfter": 22,
+        "failAfter": 44,
+        "logs": [
+          [
+            "EDGE  SYN flood, 48k packets per second, customers timing out",
+            "FW  rulepack is two versions behind the rate-limit advisory",
+            "FLOW  no single inside host owns the traffic"
+          ],
+          [
+            "EDGE  UDP reflection, uplink saturated",
+            "NOC  legitimate sessions are being dropped at the firewall",
+            "CFG  the emergency filter patch is staged, not applied"
+          ]
+        ]
+      },
+      {
+        "id": "exfil",
+        "name": "Quiet copy",
+        "weight": 2,
+        "hosts": [
+          "database",
+          "web"
+        ],
+        "correct": "scan",
+        "breachPerSec": 0.38,
+        "wrongPenalty": 12,
+        "slowPenalty": 8,
+        "failPenalty": 14,
+        "slowAfter": 24,
+        "failAfter": 46,
+        "logs": [
+          [
+            "DB  full-table reads at 02:17 with no matching ticket",
+            "EGRESS  steady 2.1 MB/s to a new network on port 443",
+            "EDR  no malware binary, just a scripted copy"
+          ],
+          [
+            "PROXY  long-lived TLS from a database user to an unseen host",
+            "DLP  customer rows leaving in small slices",
+            "PROC  nothing noisy on the endpoint itself"
+          ]
+        ]
+      }
+    ]
+  },
+  "entityTypes": {
+    "net-node": {
+      "tags": [
+        "node"
+      ],
+      "components": {
+        "shape": {
+          "w": 28,
+          "h": 28
+        },
+        "label": {
+          "text": ""
+        },
+        "node": {
+          "status": "healthy"
+        },
+        "tags": [
+          "node"
+        ]
+      }
+    }
+  },
+  "scenes": [
+    {
+      "id": "title",
+      "size": [
+        960,
+        540
+      ],
+      "entities": []
+    },
+    {
+      "id": "briefing",
+      "size": [
+        960,
+        540
+      ],
+      "entities": []
+    },
+    {
+      "id": "floor",
+      "size": [
+        960,
+        540
+      ],
+      "entities": [
+        {
+          "id": "edge-router",
+          "type": "net-node",
+          "x": 50,
+          "y": 16,
+          "name": "Edge router",
+          "kind": "router",
+          "links": [
+            "firewall"
+          ]
+        },
+        {
+          "id": "firewall",
+          "type": "net-node",
+          "x": 50,
+          "y": 38,
+          "name": "Firewall",
+          "kind": "shield",
+          "links": [
+            "edge-router",
+            "web",
+            "database",
+            "ws-a",
+            "ws-b",
+            "ws-c"
+          ]
+        },
+        {
+          "id": "web",
+          "type": "net-node",
+          "x": 18,
+          "y": 64,
+          "name": "Web server",
+          "kind": "globe",
+          "links": [
+            "firewall"
+          ]
+        },
+        {
+          "id": "database",
+          "type": "net-node",
+          "x": 50,
+          "y": 64,
+          "name": "Database",
+          "kind": "database",
+          "links": [
+            "firewall",
+            "backup"
+          ]
+        },
+        {
+          "id": "backup",
+          "type": "net-node",
+          "x": 34,
+          "y": 88,
+          "name": "Backup",
+          "kind": "drive",
+          "links": [
+            "database"
+          ]
+        },
+        {
+          "id": "ws-a",
+          "type": "net-node",
+          "x": 78,
+          "y": 46,
+          "name": "Desk A",
+          "kind": "monitor",
+          "links": [
+            "firewall"
+          ]
+        },
+        {
+          "id": "ws-b",
+          "type": "net-node",
+          "x": 84,
+          "y": 68,
+          "name": "Desk B",
+          "kind": "monitor",
+          "links": [
+            "firewall"
+          ]
+        },
+        {
+          "id": "ws-c",
+          "type": "net-node",
+          "x": 70,
+          "y": 88,
+          "name": "Desk C",
+          "kind": "monitor",
+          "links": [
+            "firewall"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "report",
+      "size": [
+        960,
+        540
+      ],
+      "entities": []
+    }
+  ],
+  "rules": [
+    {
+      "id": "begin-shift",
+      "when": {
+        "event": "click",
+        "target": "begin-shift"
+      },
+      "if": [
+        {
+          "cond": "inScene",
+          "scene": "briefing"
+        }
+      ],
+      "then": [
+        {
+          "do": "setVar",
+          "var": "clock",
+          "value": 0
+        },
+        {
+          "do": "setVar",
+          "var": "budget",
+          "value": 560
+        },
+        {
+          "do": "setVar",
+          "var": "breach",
+          "value": 4
+        },
+        {
+          "do": "changeScene",
+          "scene": "floor"
+        },
+        {
+          "do": "spawnFromTable",
+          "table": "incidents",
+          "id": "phishing",
+          "host": "ws-a"
+        },
+        {
+          "do": "log",
+          "text": "Shift started. You are the only one on call."
+        },
+        {
+          "do": "startTimer",
+          "id": "shift",
+          "seconds": 180
+        }
+      ]
+    },
+    {
+      "id": "spawn-next-haunting",
+      "when": {
+        "event": "timer",
+        "id": "spawn"
+      },
+      "if": [
+        {
+          "cond": "inScene",
+          "scene": "floor"
+        },
+        {
+          "cond": "varLt",
+          "var": "clock",
+          "value": 56
+        }
+      ],
+      "then": [
+        {
+          "do": "spawnFromTable",
+          "table": "incidents",
+          "markTag": "occupied",
+          "maxActive": 2,
+          "countVar": "spawned"
+        }
+      ]
+    },
+    {
+      "id": "lose-if-breach-full",
+      "when": {
+        "event": "varChanged",
+        "var": "breach"
+      },
+      "if": [
+        {
+          "cond": "varGt",
+          "var": "breach",
+          "value": 99
+        }
+      ],
+      "then": [
+        {
+          "do": "setVar",
+          "var": "breach",
+          "value": 100
+        },
+        {
+          "do": "log",
+          "text": "Breach meter full. The network is haunted."
+        },
+        {
+          "do": "lose"
+        },
+        {
+          "do": "changeScene",
+          "scene": "report"
+        }
+      ]
+    },
+    {
+      "id": "win-if-shift-ends-under-breach",
+      "when": {
+        "event": "timer",
+        "id": "shift"
+      },
+      "if": [
+        {
+          "cond": "varLt",
+          "var": "breach",
+          "value": 100
+        }
+      ],
+      "then": [
+        {
+          "do": "log",
+          "text": "Shift ended. The breach stayed under the line."
+        },
+        {
+          "do": "win"
+        },
+        {
+          "do": "changeScene",
+          "scene": "report"
+        }
+      ]
+    },
+    {
+      "id": "open-briefing",
+      "when": {
+        "event": "click",
+        "target": "open-briefing"
+      },
+      "if": [
+        {
+          "cond": "inScene",
+          "scene": "title"
+        }
+      ],
+      "then": [
+        {
+          "do": "changeScene",
+          "scene": "briefing"
+        }
+      ]
+    },
+    {
+      "id": "spawn-next-haunting-late",
+      "when": {
+        "event": "timer",
+        "id": "spawn"
+      },
+      "if": [
+        {
+          "cond": "inScene",
+          "scene": "floor"
+        },
+        {
+          "cond": "varGt",
+          "var": "clock",
+          "value": 55
+        }
+      ],
+      "then": [
+        {
+          "do": "spawnFromTable",
+          "table": "incidents",
+          "markTag": "occupied",
+          "maxActive": 3,
+          "countVar": "spawned"
+        }
+      ]
+    },
+    {
+      "id": "start-clocks",
+      "when": {
+        "event": "click",
+        "target": "begin-shift"
+      },
+      "if": [
+        {
+          "cond": "inScene",
+          "scene": "floor"
+        }
+      ],
+      "then": [
+        {
+          "do": "startTimer",
+          "id": "second",
+          "seconds": 1,
+          "repeat": true
+        },
+        {
+          "do": "startTimer",
+          "id": "spawn",
+          "seconds": 14,
+          "repeat": true
+        }
+      ]
+    },
+    {
+      "id": "clock-and-breach",
+      "when": {
+        "event": "timer",
+        "id": "second"
+      },
+      "if": [
+        {
+          "cond": "inScene",
+          "scene": "floor"
+        }
+      ],
+      "then": [
+        {
+          "do": "addVar",
+          "var": "clock",
+          "by": 1
+        },
+        {
+          "do": "forEach",
+          "target": "tag:occupied",
+          "if": [
+            {
+              "cond": "hasTag",
+              "tag": "lost",
+              "not": true
+            },
+            {
+              "cond": "timerRunning",
+              "id": "respond",
+              "target": "self",
+              "not": true
+            }
+          ],
+          "then": [
+            {
+              "do": "addVar",
+              "var": "breach",
+              "by": "$self.row.breachPerSec"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "haunting-opened",
+      "when": {
+        "event": "custom",
+        "name": "spawned"
+      },
+      "then": [
+        {
+          "do": "setProp",
+          "prop": "status",
+          "value": "haunted"
+        },
+        {
+          "do": "log",
+          "text": "ALERT on {self.name}: {self.row.name}"
+        },
+        {
+          "do": "log",
+          "lines": "$self.row.logs",
+          "pick": true
+        },
+        {
+          "do": "startTimer",
+          "id": "slow",
+          "seconds": "$self.row.slowAfter",
+          "target": "self"
+        },
+        {
+          "do": "startTimer",
+          "id": "fail",
+          "seconds": "$self.row.failAfter",
+          "target": "self"
+        }
+      ]
+    },
+    {
+      "id": "haunting-spreads",
+      "when": {
+        "event": "timer",
+        "id": "slow"
+      },
+      "if": [
+        {
+          "cond": "hasTag",
+          "tag": "occupied"
+        },
+        {
+          "cond": "hasTag",
+          "tag": "lost",
+          "not": true
+        }
+      ],
+      "then": [
+        {
+          "do": "addVar",
+          "var": "breach",
+          "by": "$self.row.slowPenalty"
+        },
+        {
+          "do": "log",
+          "text": "{self.name} is spreading."
+        }
+      ]
+    },
+    {
+      "id": "haunting-lost",
+      "when": {
+        "event": "timer",
+        "id": "fail"
+      },
+      "if": [
+        {
+          "cond": "hasTag",
+          "tag": "occupied"
+        },
+        {
+          "cond": "hasTag",
+          "tag": "lost",
+          "not": true
+        }
+      ],
+      "then": [
+        {
+          "do": "addTag",
+          "tag": "lost"
+        },
+        {
+          "do": "setProp",
+          "prop": "status",
+          "value": "lost"
+        },
+        {
+          "do": "stopTimer",
+          "id": "respond",
+          "target": "self"
+        },
+        {
+          "do": "addVar",
+          "var": "breach",
+          "by": "$self.row.failPenalty"
+        },
+        {
+          "do": "addVar",
+          "var": "uptime",
+          "by": -10,
+          "min": 0
+        },
+        {
+          "do": "log",
+          "text": "{self.name} is lost."
+        }
+      ]
+    },
+    {
+      "id": "select-node",
+      "when": {
+        "event": "click",
+        "target": "node"
+      },
+      "if": [
+        {
+          "cond": "inScene",
+          "scene": "floor"
+        }
+      ],
+      "then": [
+        {
+          "do": "selectEntity",
+          "target": "self"
+        },
+        {
+          "do": "log",
+          "text": "Selected {self.name}."
+        }
+      ]
+    },
+    {
+      "id": "respond-isolate-refused",
+      "when": {
+        "event": "click",
+        "target": "isolate"
+      },
+      "if": [
+        {
+          "cond": "hasSelection"
+        },
+        {
+          "cond": "compare",
+          "left": "$var.budget",
+          "op": "<",
+          "right": 40
+        }
+      ],
+      "then": [
+        {
+          "do": "log",
+          "text": "Not enough budget for Isolate."
+        }
+      ]
+    },
+    {
+      "id": "respond-isolate",
+      "when": {
+        "event": "click",
+        "target": "isolate"
+      },
+      "if": [
+        {
+          "cond": "hasSelection"
+        },
+        {
+          "cond": "hasTag",
+          "target": "selected",
+          "tag": "occupied"
+        },
+        {
+          "cond": "hasTag",
+          "target": "selected",
+          "tag": "lost",
+          "not": true
+        },
+        {
+          "cond": "timerRunning",
+          "id": "respond",
+          "target": "selected",
+          "not": true
+        },
+        {
+          "cond": "compare",
+          "left": "$var.budget",
+          "op": ">=",
+          "right": 40
+        }
+      ],
+      "then": [
+        {
+          "do": "addVar",
+          "var": "budget",
+          "by": -40
+        },
+        {
+          "do": "startTimer",
+          "id": "respond",
+          "seconds": 6,
+          "target": "selected",
+          "data": {
+            "answer": "isolate"
+          }
+        },
+        {
+          "do": "log",
+          "text": "Isolate started on {selected.name}."
+        }
+      ]
+    },
+    {
+      "id": "respond-block-refused",
+      "when": {
+        "event": "click",
+        "target": "block"
+      },
+      "if": [
+        {
+          "cond": "hasSelection"
+        },
+        {
+          "cond": "compare",
+          "left": "$var.budget",
+          "op": "<",
+          "right": 30
+        }
+      ],
+      "then": [
+        {
+          "do": "log",
+          "text": "Not enough budget for Block address."
+        }
+      ]
+    },
+    {
+      "id": "respond-block",
+      "when": {
+        "event": "click",
+        "target": "block"
+      },
+      "if": [
+        {
+          "cond": "hasSelection"
+        },
+        {
+          "cond": "hasTag",
+          "target": "selected",
+          "tag": "occupied"
+        },
+        {
+          "cond": "hasTag",
+          "target": "selected",
+          "tag": "lost",
+          "not": true
+        },
+        {
+          "cond": "timerRunning",
+          "id": "respond",
+          "target": "selected",
+          "not": true
+        },
+        {
+          "cond": "compare",
+          "left": "$var.budget",
+          "op": ">=",
+          "right": 30
+        }
+      ],
+      "then": [
+        {
+          "do": "addVar",
+          "var": "budget",
+          "by": -30
+        },
+        {
+          "do": "startTimer",
+          "id": "respond",
+          "seconds": 5,
+          "target": "selected",
+          "data": {
+            "answer": "block"
+          }
+        },
+        {
+          "do": "log",
+          "text": "Block address started on {selected.name}."
+        }
+      ]
+    },
+    {
+      "id": "respond-patch-refused",
+      "when": {
+        "event": "click",
+        "target": "patch"
+      },
+      "if": [
+        {
+          "cond": "hasSelection"
+        },
+        {
+          "cond": "compare",
+          "left": "$var.budget",
+          "op": "<",
+          "right": 80
+        }
+      ],
+      "then": [
+        {
+          "do": "log",
+          "text": "Not enough budget for Patch edge."
+        }
+      ]
+    },
+    {
+      "id": "respond-patch",
+      "when": {
+        "event": "click",
+        "target": "patch"
+      },
+      "if": [
+        {
+          "cond": "hasSelection"
+        },
+        {
+          "cond": "hasTag",
+          "target": "selected",
+          "tag": "occupied"
+        },
+        {
+          "cond": "hasTag",
+          "target": "selected",
+          "tag": "lost",
+          "not": true
+        },
+        {
+          "cond": "timerRunning",
+          "id": "respond",
+          "target": "selected",
+          "not": true
+        },
+        {
+          "cond": "compare",
+          "left": "$var.budget",
+          "op": ">=",
+          "right": 80
+        }
+      ],
+      "then": [
+        {
+          "do": "addVar",
+          "var": "budget",
+          "by": -80
+        },
+        {
+          "do": "startTimer",
+          "id": "respond",
+          "seconds": 9,
+          "target": "selected",
+          "data": {
+            "answer": "patch"
+          }
+        },
+        {
+          "do": "log",
+          "text": "Patch edge started on {selected.name}."
+        }
+      ]
+    },
+    {
+      "id": "respond-scan-refused",
+      "when": {
+        "event": "click",
+        "target": "scan"
+      },
+      "if": [
+        {
+          "cond": "hasSelection"
+        },
+        {
+          "cond": "compare",
+          "left": "$var.budget",
+          "op": "<",
+          "right": 60
+        }
+      ],
+      "then": [
+        {
+          "do": "log",
+          "text": "Not enough budget for Deep scan."
+        }
+      ]
+    },
+    {
+      "id": "respond-scan",
+      "when": {
+        "event": "click",
+        "target": "scan"
+      },
+      "if": [
+        {
+          "cond": "hasSelection"
+        },
+        {
+          "cond": "hasTag",
+          "target": "selected",
+          "tag": "occupied"
+        },
+        {
+          "cond": "hasTag",
+          "target": "selected",
+          "tag": "lost",
+          "not": true
+        },
+        {
+          "cond": "timerRunning",
+          "id": "respond",
+          "target": "selected",
+          "not": true
+        },
+        {
+          "cond": "compare",
+          "left": "$var.budget",
+          "op": ">=",
+          "right": 60
+        }
+      ],
+      "then": [
+        {
+          "do": "addVar",
+          "var": "budget",
+          "by": -60
+        },
+        {
+          "do": "startTimer",
+          "id": "respond",
+          "seconds": 8,
+          "target": "selected",
+          "data": {
+            "answer": "scan"
+          }
+        },
+        {
+          "do": "log",
+          "text": "Deep scan started on {selected.name}."
+        }
+      ]
+    },
+    {
+      "id": "respond-restore-refused",
+      "when": {
+        "event": "click",
+        "target": "restore"
+      },
+      "if": [
+        {
+          "cond": "hasSelection"
+        },
+        {
+          "cond": "compare",
+          "left": "$var.budget",
+          "op": "<",
+          "right": 120
+        }
+      ],
+      "then": [
+        {
+          "do": "log",
+          "text": "Not enough budget for Restore."
+        }
+      ]
+    },
+    {
+      "id": "respond-restore",
+      "when": {
+        "event": "click",
+        "target": "restore"
+      },
+      "if": [
+        {
+          "cond": "hasSelection"
+        },
+        {
+          "cond": "hasTag",
+          "target": "selected",
+          "tag": "occupied"
+        },
+        {
+          "cond": "hasTag",
+          "target": "selected",
+          "tag": "lost",
+          "not": true
+        },
+        {
+          "cond": "timerRunning",
+          "id": "respond",
+          "target": "selected",
+          "not": true
+        },
+        {
+          "cond": "compare",
+          "left": "$var.budget",
+          "op": ">=",
+          "right": 120
+        }
+      ],
+      "then": [
+        {
+          "do": "addVar",
+          "var": "budget",
+          "by": -120
+        },
+        {
+          "do": "startTimer",
+          "id": "respond",
+          "seconds": 11,
+          "target": "selected",
+          "data": {
+            "answer": "restore"
+          }
+        },
+        {
+          "do": "log",
+          "text": "Restore started on {selected.name}."
+        }
+      ]
+    },
+    {
+      "id": "respond-correct",
+      "when": {
+        "event": "timer",
+        "id": "respond"
+      },
+      "if": [
+        {
+          "cond": "compare",
+          "left": "$timer.answer",
+          "op": "==",
+          "right": "$self.row.correct"
+        }
+      ],
+      "then": [
+        {
+          "do": "removeTag",
+          "tag": "occupied"
+        },
+        {
+          "do": "setProp",
+          "prop": "status",
+          "value": "healthy"
+        },
+        {
+          "do": "stopTimer",
+          "id": "slow",
+          "target": "self"
+        },
+        {
+          "do": "stopTimer",
+          "id": "fail",
+          "target": "self"
+        },
+        {
+          "do": "addVar",
+          "var": "breach",
+          "by": -5,
+          "min": 0
+        },
+        {
+          "do": "addVar",
+          "var": "stopped",
+          "by": 1
+        },
+        {
+          "do": "log",
+          "text": "{self.name} cleared."
+        }
+      ]
+    },
+    {
+      "id": "respond-wrong",
+      "when": {
+        "event": "timer",
+        "id": "respond"
+      },
+      "if": [
+        {
+          "cond": "compare",
+          "left": "$timer.answer",
+          "op": "!=",
+          "right": "$self.row.correct"
+        }
+      ],
+      "then": [
+        {
+          "do": "addVar",
+          "var": "breach",
+          "by": "$self.row.wrongPenalty"
+        },
+        {
+          "do": "addVar",
+          "var": "wrong",
+          "by": 1
+        },
+        {
+          "do": "log",
+          "text": "That did not work on {self.name}."
+        }
+      ]
+    }
+  ],
+  "ui": [
+    {
+      "widget": "text",
+      "text": "Ghost in the Machine",
+      "pos": "center",
+      "scene": "title"
+    },
+    {
+      "widget": "button",
+      "id": "open-briefing",
+      "label": "Read the brief",
+      "pos": "center",
+      "scene": "title"
+    },
+    {
+      "widget": "text",
+      "text": "One response is correct. Read the log before you spend budget.",
+      "pos": "top",
+      "scene": "briefing"
+    },
+    {
+      "widget": "button",
+      "id": "begin-shift",
+      "label": "Begin shift",
+      "pos": "bottom",
+      "scene": "briefing"
+    },
+    {
+      "widget": "bar",
+      "var": "breach",
+      "max": 100,
+      "label": "Breach",
+      "pos": "top-left",
+      "scene": "floor"
+    },
+    {
+      "widget": "bar",
+      "var": "budget",
+      "max": 560,
+      "label": "Budget",
+      "pos": "top",
+      "scene": "floor"
+    },
+    {
+      "widget": "text",
+      "var": "clock",
+      "label": "Clock",
+      "pos": "top-right",
+      "scene": "floor"
+    },
+    {
+      "widget": "text",
+      "var": "uptime",
+      "label": "Uptime",
+      "pos": "top-right",
+      "scene": "floor"
+    },
+    {
+      "widget": "list",
+      "id": "log",
+      "label": "Log",
+      "pos": "right",
+      "scene": "floor"
+    },
+    {
+      "widget": "button",
+      "id": "isolate",
+      "label": "Isolate  40",
+      "pos": "bottom",
+      "scene": "floor"
+    },
+    {
+      "widget": "button",
+      "id": "block",
+      "label": "Block address  30",
+      "pos": "bottom",
+      "scene": "floor"
+    },
+    {
+      "widget": "button",
+      "id": "patch",
+      "label": "Patch edge  80",
+      "pos": "bottom",
+      "scene": "floor"
+    },
+    {
+      "widget": "button",
+      "id": "scan",
+      "label": "Deep scan  60",
+      "pos": "bottom",
+      "scene": "floor"
+    },
+    {
+      "widget": "button",
+      "id": "restore",
+      "label": "Restore  120",
+      "pos": "bottom",
+      "scene": "floor"
+    },
+    {
+      "widget": "modal",
+      "id": "report",
+      "scene": "report"
+    },
+    {
+      "widget": "table",
+      "vars": [
+        "stopped",
+        "spawned",
+        "wrong"
+      ],
+      "scene": "report"
+    }
+  ]
+}
