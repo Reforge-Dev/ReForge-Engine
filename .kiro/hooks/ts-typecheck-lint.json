@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Typecheck and lint saved engine TypeScript",
+      "trigger": "PostFileSave",
+      "description": "On save of any .ts under engine/src: run the engine typecheck, then pnpm lint (the same lint command CI and the pre-commit check use).",
+      "matcher": "engine[\\\\/]src[\\\\/].*\\.ts$",
+      "action": {
+        "type": "command",
+        "command": "node engine/scripts/hook-run.mjs ts",
+        "timeout": 120
+      }
+    }
+  ]
+}

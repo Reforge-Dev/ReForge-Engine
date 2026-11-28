@@ -278,3 +278,47 @@ describe("condition negation", () => {
     expect(sim.vars["ok"]).toBe(true);
   });
 });
+
+describe("click hit-testing follows draw order", () => {
+  const stacked = (sortBy?: string) => ({
+    meta: { title: "t", version: 1, startScene: "s" },
+    variables: { hit: "" },
+    entityTypes: { card: { tags: ["card"], components: { shape: { w: 20, h: 20 } } } },
+    scenes: [
+      {
+        id: "s",
+        size: [100, 100],
+        ...(sortBy === undefined ? {} : { sortBy }),
+        // "low" has the larger y but comes first in the array.
+        entities: [
+          { type: "card", id: "low", x: 50, y: 55 },
+          { type: "card", id: "high", x: 50, y: 50 },
+        ],
+      },
+    ],
+    rules: [
+      {
+        when: { event: "click", target: "card" },
+        then: [{ do: "setVar", var: "hit", value: "$self.id" }],
+      },
+    ],
+  });
+  const clickAt = (x: number, y: number): InputFrame => ({
+    ...EMPTY_INPUT,
+    clicks: [{ x, y, button: 0 }],
+  });
+
+  it("clicks the entity later in the array by default", () => {
+    const sim = createSimulation(stacked());
+    sim.step(clickAt(50, 52));
+    expect(sim.vars["hit"]).toBe("high");
+    expect(sim.renderState().sortBy).toBe("order");
+  });
+
+  it("clicks the entity with the larger y when the scene sets sortBy y", () => {
+    const sim = createSimulation(stacked("y"));
+    sim.step(clickAt(50, 52));
+    expect(sim.vars["hit"]).toBe("low");
+    expect(sim.renderState().sortBy).toBe("y");
+  });
+});

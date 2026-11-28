@@ -6,11 +6,11 @@ inclusion: always
 
 ```
 ReForge-Engine/
-├── .kiro/            specs/ steering/ hooks/ agents/  (committed, never ignored)
-├── docs/             PLAN.md, CONTRACT.md (source of truth), behaviors.md (generated)
+├── .kiro/            specs/ steering/ hooks/  (committed, never ignored)
+├── docs/             PLAN.md, CONTRACT.md (source of truth), behaviors.md (generated), handoff/
 ├── engine/           runtime (owner: Muhammad)
 ├── editor/           React editor (owner: Andrew). Do not touch.
-├── examples/         hello/, ghost-catcher/ (game.json + index.html)
+├── examples/         hello/ (game.json + index.html), ghost-catcher/
 ├── scripts/          sync-games.sh, check-submission.sh
 ├── dungeon-crawler/  synced from ReForge-Dungeon. NEVER edit.
 └── cyberops/         synced from ReForge-CyberOps. NEVER edit.
@@ -18,21 +18,26 @@ ReForge-Engine/
 
 ## engine/src
 
-| Folder       | Contains                                                                                                                                                         |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `core/`      | Game loop (fixed timestep), seeded RNG, world/entities, scenes, input, camera, public `createGame`, registry. Nothing here knows about specific behaviors.       |
-| `rules/`     | Event bus, when/if/then interpreter, variables store. Pure functions over state.                                                                                 |
-| `behaviors/` | One file per behavior (event, condition, action, component). Each registers itself with typed param descriptors.                                                 |
-| `ui/`        | DOM overlay widgets (text, bar, button, panel, list/log, table, modal) and `reforge-engine.css`.                                                                 |
-| `schema/`    | TypeScript types mirroring CONTRACT §1, `validateGame`, JSON Schema generation. Changes need all three owners to approve.                                       |
-| `io/`        | Impure edges: asset loader and cache, DOM/keyboard/mouse listeners, audio, canvas renderer glue.                                                                 |
+| Folder       | Contains                                                                                                                                            |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `types.ts`   | Shared types (`Json`, `Entity`, `InputFrame`, `Param`, `RenderState`, `UiHost`). Imports nothing.                                                    |
+| `order.ts`   | Draw order (`sortForDraw`, `layerOf`), shared by the renderer and click hit-testing. Imports only `types.ts`.                                   |
+| `core/`      | `sim.ts` (Simulation: scenes, tick, timers, movers, AI, collisions), `world.ts`, `geometry.ts`, `rng.ts`, `registry.ts`, `json.ts`, `game.ts` (loop). |
+| `rules/`     | `expr.ts` (`$` references, `{name}` text, target matching) and `types.ts` (Event/Condition/Action defs, `Scope`).                                    |
+| `behaviors/` | `events.ts`, `conditions.ts`, `actions.ts`, `components.ts`: arrays of definitions. `index.ts` builds the registry.                                   |
+| `ui/`        | DOM widgets (`widgets.ts`, `mount.ts`), widget definitions (`defs.ts`), `reforge-engine.css`.                                                        |
+| `io/`        | Impure edges: `assets.ts`, `input.ts`, `renderer.ts`, `draw.ts`, `transform.ts`.                                                                     |
+| `schema/`    | `types.ts`, `validate.ts` (`validateGame`), `jsonschema.ts`, `shared.ts` (required keys). Needs all three owners to approve changes.                 |
+| `index.ts`   | Public API: `createGame`, `createSimulation`, `validateGame`, `registry`, `gameSchema`.                                                              |
 
-Tests live next to the code as `*.test.ts`; property tests as `*.prop.test.ts`.
+`engine/scripts/`: `gen.ts` (manifest, schema, `docs/behaviors.md`), `docs.ts` (pure docs renderer), `check-size.mjs` (60 KB gzip gate), `validate-game.ts`, `hook-run.mjs` (used by `.kiro/hooks`).
+
+Tests sit next to the code: `*.test.ts` for examples, `*.prop.test.ts` for fast-check properties.
 
 ## Dependency direction
 
-`schema` and `core` depend on nothing else. `rules` depends on `core` and `schema`. `behaviors` depends on `core`, `rules`, `schema`. `ui` and `io` depend on `core`. Only `index.ts` wires everything together. No cycles.
+Everything may import `types.ts` and `order.ts` (both leaves). `ui`, `io` and `schema` import nothing else. `core/sim` uses `rules`, `core/*`. `behaviors` uses `core`, `rules`, `ui` (widget defs). `core/game.ts` wires `sim`, `io`, `ui` and `schema`. Only `index.ts` is public. The one cycle (`rules/types` imports the `Simulation` type) is type-only.
 
 ## Generated files (never hand-edit)
 
-`dist/behaviors.manifest.json`, `dist/game.schema.json`, `docs/behaviors.md`.
+`engine/dist/*`, `docs/behaviors.md`. Regenerate with `pnpm -F engine gen`.

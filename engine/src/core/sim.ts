@@ -17,6 +17,7 @@ import { Rng } from "./rng";
 import { World } from "./world";
 import { clone, deepMerge, isArr, isObj, num, str } from "./json";
 import { collisionPairs, contains, isSolid, moveWithCollision, sizeOf } from "./geometry";
+import { parseSortBy, sortForDraw } from "../order";
 
 /** Fixed simulation step, in seconds. */
 export const DT = 1 / 60;
@@ -489,9 +490,9 @@ export class Simulation {
   }
 
   private entityAt(x: number, y: number): Entity | undefined {
-    const hits = this.world.all().filter((e) => contains(e, x, y));
-    hits.sort((a, b) => layerOf(a) - layerOf(b) || a.y - b.y || (a.id < b.id ? -1 : 1));
-    return hits.at(-1);
+    // Topmost = drawn last, using the same order as the renderer.
+    const order = sortForDraw(this.world.all(), parseSortBy(this.currentScene()?.["sortBy"]));
+    return order.filter((e) => contains(e, x, y)).at(-1);
   }
 
   private advanceTimers(): void {
@@ -627,7 +628,7 @@ export class Simulation {
 
   /** Read-only snapshot for the renderer. */
   renderState(): RenderState {
-    const scene = this.scenes.find((s) => s["id"] === this.sceneId);
+    const scene = this.currentScene();
     const sz = isArr(scene?.["size"]) ? scene["size"] : [320, 240];
     const size: [number, number] = [Math.max(1, num(sz[0], 320)), Math.max(1, num(sz[1], 240))];
     const entities = this.world.all();
@@ -641,6 +642,7 @@ export class Simulation {
     };
     const bg = scene?.["background"] ?? this.meta["background"];
     if (typeof bg === "string") state.background = bg;
+    state.sortBy = parseSortBy(scene?.["sortBy"]);
     return state;
   }
 
@@ -679,11 +681,11 @@ export class Simulation {
     return [...out].sort();
   }
 
+  private currentScene(): JsonObject | undefined {
+    return this.scenes.find((s) => s["id"] === this.sceneId);
+  }
+
   sizeOf(e: Entity): [number, number] {
     return sizeOf(e);
   }
-}
-
-function layerOf(e: Entity): number {
-  return num(e.components["sprite"]?.["layer"], num(e.components["shape"]?.["layer"], 0));
 }
