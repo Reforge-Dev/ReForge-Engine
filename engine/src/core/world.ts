@@ -18,6 +18,8 @@ export class World {
   private map = new Map<string, Entity>();
   private pending = new Set<string>();
   private counter = 0;
+  /** Every id handed out this run, so a generated id never repeats one that was removed. */
+  private issued = new Set<string>();
 
   add(spec: NewEntity): Entity {
     let id = spec.id && spec.id.length > 0 ? spec.id : "";
@@ -26,7 +28,7 @@ export class World {
       do {
         this.counter += 1;
         id = `${stem}-${this.counter}`;
-      } while (this.map.has(id));
+      } while (this.map.has(id) || this.issued.has(id));
     }
     const entity: Entity = {
       id,
@@ -37,6 +39,7 @@ export class World {
       props: spec.props ?? {},
       components: spec.components ?? {},
     };
+    this.issued.add(id);
     this.map.set(id, entity);
     return entity;
   }
@@ -93,6 +96,7 @@ export class World {
   /** Only for a full restart. */
   resetIds(): void {
     this.counter = 0;
+    this.issued.clear();
   }
 
   toJSON(): EntityState[] {
