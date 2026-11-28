@@ -1,0 +1,10 @@
+# Default
+*                         @mabdulrehman08
+/engine/                  @mabdulrehman08
+/editor/                  @ahellmann201
+# Contract + schema: all three must approve (enforce via branch protection "require review from code owners")
+/docs/CONTRACT.md         @mabdulrehman08 @ahellmann201 @Karimov24
+/engine/src/schema/       @mabdulrehman08 @ahellmann201 @Karimov24
+# Synced from the game repos: change them THERE, not here
+/dungeon-crawler/         @ahellmann201
+/cyberops/                @Karimov24
