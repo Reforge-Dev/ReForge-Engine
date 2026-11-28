@@ -179,7 +179,7 @@ flowchart LR
 
 ## 8. Correctness properties (fast-check)
 
-Each property is run with `fc.assert`. If one fails, the engine is fixed, not the property (see tasks.md T10).
+Each property is run with `fc.assert`. If one fails, the engine is fixed, not the property (see tasks.md T19 to T23).
 
 | ID | Property | Requirements | File |
 | -- | -------- | ------------ | ---- |
@@ -196,7 +196,7 @@ Each property is run with `fc.assert`. If one fails, the engine is fixed, not th
 
 Places where the original requirements, the team brief or the steering docs disagreed with the code. The requirements and this design now follow the code except where marked **open**.
 
-1. **Draw order. Open.** The brief says draw order is array order with an optional `layer`. `io/draw.ts` `sortForDraw` sorts by layer, then `y`, then id, and a renderer test pins that. Array order is not used. This matters for the editor's "Bring front" and "Send back", which reorder the array. Needs a decision (tasks.md T9).
+1. **Draw order. Open.** The brief says draw order is array order with an optional `layer`. `io/draw.ts` `sortForDraw` sorts by layer, then `y`, then id, and a renderer test pins that. Array order is not used. This matters for the editor's "Bring front" and "Send back", which reorder the array. Needs a decision (tasks.md T16).
 2. **Entity ids.** The original draft said `e1`, `e2`. The code uses `<type>-<n>` for generated ids and the authored `id` when given.
 3. **Removal visibility.** The draft said a removed entity stays queryable until the end of the tick. The code hides it from queries immediately and keeps `getById`. Adds are visible immediately, not at end of tick.
 4. **Tick order.** The draft listed input, movers, collisions, flush. The shipped order also runs timers, AI and rules, and rules run after collisions (R2.9).
