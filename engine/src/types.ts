@@ -104,6 +104,8 @@ export interface RenderState {
   byId: ReadonlyMap<string, Entity>;
   /** Background color from scene.background or meta.background; undefined = renderer default. */
   background?: string;
+  /** Order inside a layer: array order (default) or y. From scene.sortBy. */
+  sortBy?: "order" | "y";
 }
 
 // ---------- io/ contracts (implemented in io/, consumed by core/index) ----------

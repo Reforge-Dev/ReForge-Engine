@@ -122,7 +122,7 @@ describe("createRenderer", () => {
     expect(bars.y).toBeLessThan(0);
   });
 
-  it("sorts by layer, then y, then id and does not mutate state", () => {
+  it("sorts by layer, then array order, and does not mutate state", () => {
     const { canvas, calls } = fakeCanvas(200, 100);
     const shape = (color: string, layer = 0): JsonObject => ({ w: 4, h: 4, color, layer });
     const list = [
@@ -132,10 +132,21 @@ describe("createRenderer", () => {
     ];
     const state = stateOf(list);
     createRenderer(canvas, noAssets).draw(state, { debug: false });
-    expect(rects(calls).slice(2)).toEqual(["#333333", "#222222", "#111111"]);
+    // Layer 0 in array order (b before c, even though c has the smaller y), then layer 1.
+    expect(rects(calls).slice(2)).toEqual(["#222222", "#333333", "#111111"]);
     expect(state.entities.map((e) => e.id)).toEqual(["a", "b", "c"]);
   });
-
+  it("sorts by y inside a layer only when sortBy is y", () => {
+    const { canvas, calls } = fakeCanvas(200, 100);
+    const shape = (color: string, layer = 0): JsonObject => ({ w: 4, h: 4, color, layer });
+    const list = [
+      entity("a", 5, 0, { shape: shape("#111111", 1) }),
+      entity("b", 5, 10, { shape: shape("#222222") }),
+      entity("c", 5, 5, { shape: shape("#333333") }),
+    ];
+    createRenderer(canvas, noAssets).draw({ ...stateOf(list), sortBy: "y" }, { debug: false });
+    expect(rects(calls).slice(2)).toEqual(["#333333", "#222222", "#111111"]);
+  });
   it("draws a magenta placeholder for a missing sprite and skips undrawable entities", () => {
     const { canvas, calls } = fakeCanvas(200, 100);
     const list = [

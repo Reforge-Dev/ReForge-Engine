@@ -21,6 +21,7 @@ ReForge-Engine/
 | Folder       | Contains                                                                                                                                            |
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `types.ts`   | Shared types (`Json`, `Entity`, `InputFrame`, `Param`, `RenderState`, `UiHost`). Imports nothing.                                                    |
+| `order.ts`   | Draw order (`sortForDraw`, `layerOf`), shared by the renderer and click hit-testing. Imports only `types.ts`.                                   |
 | `core/`      | `sim.ts` (Simulation: scenes, tick, timers, movers, AI, collisions), `world.ts`, `geometry.ts`, `rng.ts`, `registry.ts`, `json.ts`, `game.ts` (loop). |
 | `rules/`     | `expr.ts` (`$` references, `{name}` text, target matching) and `types.ts` (Event/Condition/Action defs, `Scope`).                                    |
 | `behaviors/` | `events.ts`, `conditions.ts`, `actions.ts`, `components.ts`: arrays of definitions. `index.ts` builds the registry.                                   |
@@ -35,7 +36,7 @@ Tests sit next to the code: `*.test.ts` for examples, `*.prop.test.ts` for fast-
 
 ## Dependency direction
 
-Everything may import `types.ts`. `ui`, `io` and `schema` import nothing else. `core/sim` uses `rules`, `core/*`. `behaviors` uses `core`, `rules`, `ui` (widget defs). `core/game.ts` wires `sim`, `io`, `ui` and `schema`. Only `index.ts` is public. The one cycle (`rules/types` imports the `Simulation` type) is type-only.
+Everything may import `types.ts` and `order.ts` (both leaves). `ui`, `io` and `schema` import nothing else. `core/sim` uses `rules`, `core/*`. `behaviors` uses `core`, `rules`, `ui` (widget defs). `core/game.ts` wires `sim`, `io`, `ui` and `schema`. Only `index.ts` is public. The one cycle (`rules/types` imports the `Simulation` type) is type-only.
 
 ## Generated files (never hand-edit)
 

@@ -1,4 +1,7 @@
 import type { AssetStore, Entity, Json, JsonObject, RenderState } from "../types";
+import { sortForDraw } from "../order";
+
+export { sortForDraw };
 
 export const BAR_COLOR = "#0c0d0b";
 const DEFAULT_BACKGROUND = "#16181d";
@@ -20,20 +23,6 @@ function num(v: Json | undefined, fallback: number): number {
 
 function str(v: Json | undefined, fallback: string): string {
   return typeof v === "string" ? v : fallback;
-}
-
-function layerOf(e: Entity): number {
-  return num(e.components.sprite?.layer, num(e.components.shape?.layer, 0));
-}
-
-/** Layer ascending, then y ascending, then id. Returns a copy. */
-export function sortForDraw(entities: readonly Entity[]): Entity[] {
-  return [...entities].sort((a, b) => {
-    const dl = layerOf(a) - layerOf(b);
-    if (dl !== 0) return dl;
-    if (a.y !== b.y) return a.y - b.y;
-    return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
-  });
 }
 
 /** Color for an entity that has a `node` component; null otherwise. */
@@ -174,7 +163,7 @@ export function drawWorld(
 ): void {
   ctx.fillStyle = state.background ?? DEFAULT_BACKGROUND;
   ctx.fillRect(state.view.x, state.view.y, state.view.w, state.view.h);
-  const sorted = sortForDraw(state.entities);
+  const sorted = sortForDraw(state.entities, state.sortBy);
   drawLinks(ctx, state, sorted, px);
   for (const e of sorted) {
     const sprite = e.components.sprite;

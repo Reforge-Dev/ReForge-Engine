@@ -102,7 +102,7 @@ Source of truth for the game format: `docs/CONTRACT.md` (§8 holds the additive 
 7. THE Engine SHALL call `preventDefault` for arrow keys pressed on the canvas, and not for other targets.
 8. THE Simulation SHALL accept scripted InputFrames through `step`.
 9. WHEN the Game is destroyed, THE Engine SHALL remove its input listeners.
-10. WHEN a click lands on an entity, THE Engine SHALL pick the topmost one (highest layer, then largest y, then id) as `self` of the `click` event.
+10. WHEN a click lands on entities, THE Engine SHALL pick the one drawn on top (the last in draw order, R8.2) as `self` of the `click` event.
 
 ## R7 Camera and canvas
 
@@ -118,7 +118,7 @@ Source of truth for the game format: `docs/CONTRACT.md` (§8 holds the additive 
 ## R8 Renderer and assets
 
 1. THE renderer SHALL read state only and SHALL NOT change the World.
-2. THE renderer SHALL draw entities sorted by `layer` ascending (`sprite.layer`, else `shape.layer`, default 0), then `y` ascending, then id. *(Open question: the team brief says draw order is array order. See design.md "Known deviations".)*
+2. THE renderer SHALL draw entities sorted by `layer` ascending (`sprite.layer`, else `shape.layer`, default 0), then by their position in the entity array (later draws on top). WHERE the scene sets `sortBy: "y"`, entities in the same layer SHALL be sorted by `y` ascending, then array position. Reordering the array SHALL change draw order only inside a layer, never across layers.
 3. THE renderer SHALL support `sprite` (`image`, `w`, `h`, `cols`, `rows`, `frame`, `layer`) and `shape` (`kind` rect or circle, `color`, `w`, `h`, `layer`).
 4. THE renderer SHALL draw `node` entities with links to the entities named in `props.links`, each link once, and color them by `props.status`.
 5. THE asset loader SHALL cache images by resolved URL and resolve paths against `opts.assetBase` (default `"./"`). Absolute and data URLs SHALL be left alone.

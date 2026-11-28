@@ -144,7 +144,7 @@ interface Scope { self?: Entity; other?: Entity; timer?: JsonObject }
 
 ## 5. Render, input and UI separation
 
-- **io/renderer**: owns the canvas transform (`fitView`, letterbox, devicePixelRatio). `draw(state, { debug })` clears, fits the view, draws links, then entities sorted by layer, y, id.
+- **io/renderer**: owns the canvas transform (`fitView`, letterbox, devicePixelRatio). `draw(state, { debug })` clears, fits the view, draws links, then entities in draw order (`src/order.ts`: layer, then array order, or `y` then array order when `scene.sortBy` is `"y"`).
 - **io/input**: listens on the canvas and window, queues events, and `frame()` drains them into one `InputFrame`. World coordinates come from `renderer.screenToWorld`.
 - **ui**: `mountUi(root, host)` builds `.rf-ui` with nine position slots. `update()` runs once per frame. It rebuilds only when `host.widgets` changes identity, otherwise it patches text, widths and visibility.
 - **core/game.ts** wires the three, owns `requestAnimationFrame`, the accumulator and the visibility handler. It is the only file that calls `performance.now`.
@@ -190,13 +190,14 @@ Each property is run with `fc.assert`. If one fails, the engine is fixed, not th
 | P5 | **Collision symmetry.** `overlap(a, b) === overlap(b, a)`, and `collisionPairs` has no self-pairs or duplicates and is sorted. | R9.2, R9.4 | `core/geometry.prop.test.ts` |
 | P6 | **Validator robustness.** Random mutations of `examples/hello/game.json` (delete a key, replace a value with another type) never throw, return a consistent `{ ok, errors }`, and report pointer-style paths. Deleting a required key reports exactly that path. | R10.4, R10.5 | `schema/mutation.prop.test.ts` |
 | P7 | **Manifest and docs.** Every registry entry of every kind appears in `toManifest()` with equal params, names are sorted and unique, and the committed `docs/behaviors.md` equals what the generator renders now. | R16.6 to R16.8 | `behaviors/manifest.prop.test.ts` |
+| P9 | **Draw order.** Any reordering of the entity array gives the same layer sequence; inside a layer the order is the array order (or y then array order with `sortBy: "y"`); moving one entity to the end brings it to the front of its layer only. | R8.2 | `order.prop.test.ts` |
 | P8 | **Existing.** `validateGame` accepts generated valid games, round-trips, and never throws on `fc.anything()`. | R10 | `schema/validate.prop.test.ts` |
 
 ## 9. Known deviations
 
 Places where the original requirements, the team brief or the steering docs disagreed with the code. The requirements and this design now follow the code except where marked **open**.
 
-1. **Draw order. Open.** The brief says draw order is array order with an optional `layer`. `io/draw.ts` `sortForDraw` sorts by layer, then `y`, then id, and a renderer test pins that. Array order is not used. This matters for the editor's "Bring front" and "Send back", which reorder the array. Needs a decision (tasks.md T16).
+1. **Draw order (resolved).** v0.1.0 sorted by layer, then `y`, then id, which ignored the array order that the contract and the editor's Bring front and Send back rely on. Now: layer, then array order. `scene.sortBy: "y"` opts a scene into y-sorting inside each layer. One function, `src/order.ts` `sortForDraw`, drives both drawing and click hit-testing. The `sortBy` key is named in CONTRACT and the schema in the separate schema/contract PR.
 2. **Entity ids.** The original draft said `e1`, `e2`. The code uses `<type>-<n>` for generated ids and the authored `id` when given.
 3. **Removal visibility.** The draft said a removed entity stays queryable until the end of the tick. The code hides it from queries immediately and keeps `getById`. Adds are visible immediately, not at end of tick.
 4. **Tick order.** The draft listed input, movers, collisions, flush. The shipped order also runs timers, AI and rules, and rules run after collisions (R2.9).

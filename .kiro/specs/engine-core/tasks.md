@@ -31,11 +31,7 @@ Shipped commits:
 
 ### Decisions that need an answer
 
-- [ ] **T16 Draw order.** R8.2. The brief says array order. The renderer sorts by layer, y, id. Pick one:
-  - (a) Keep layer, y, id. Andrew's "Bring front" and "Send back" then need to set `layer` (editor change).
-  - (b) Draw in array order within a layer, dropping the y sort. Smallest change: replace `a.y - b.y` in `sortForDraw` and `entityAt` with the array index. Breaks the y-sorted look for top-down games unless authors use `layer`.
-  - (c) Array order within a layer by default; y-sort only when `meta.ySort: true` (additive).
-  - Recommendation: (c). Waiting for the owner's answer. No code change made.
+- [x] **T16 Draw order.** R8.2, R6.10. Decision (owner): layer, then array order; `scene.sortBy: "y"` opts in to y-sorting inside a layer. `src/order.ts` is used by the renderer and by click hit-testing. Property P9 in `order.prop.test.ts`. Naming `sortBy` in CONTRACT and the schema is in the schema/contract PR (T17).
 
 - [ ] **T17 Percent positions.** CyberOps authored 18 to 84 in a 960 by 540 scene. Smallest additive design:
   - **Proposal A (recommended):** optional `scene.units: "px" | "percent"`, default `"px"`. With `"percent"`, an instance's `x` and `y` are percentages of the scene size (0 to 100) and are converted once in `spawnInstance` (`x * size[0] / 100`). Component sizes stay in pixels. The `spawn` action is unchanged (pixels). Cost: about 6 lines in `sim.ts`, one key in the validator and schema, one line in CONTRACT Â§8, one `select` in the editor's scene form.

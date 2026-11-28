@@ -35,7 +35,7 @@ inclusion: always
 
 ## Coordinates
 
-Scene units are pixels, origin top-left. Entity `x, y` is the center of the thing. Colliders and sprites extend half their size around it. Draw order: `layer`, then `y`, then id (see design.md deviation 1).
+Scene units are pixels, origin top-left. Entity `x, y` is the center of the thing. Colliders and sprites extend half their size around it. Draw order: `layer`, then array order (later draws on top). `scene.sortBy: "y"` sorts by `y` inside each layer. `src/order.ts` is the one definition, used for drawing and clicks.
 
 ## Budgets and support
 
