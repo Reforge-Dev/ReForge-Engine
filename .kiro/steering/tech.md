@@ -7,35 +7,41 @@ inclusion: always
 ## Stack
 
 - TypeScript (strict), Vite library mode, pnpm workspace (`engine`, `editor`).
-- Rendering: Canvas 2D for the world, DOM overlay for UI widgets.
-- Tests: Vitest + fast-check. Lint: ESLint (typescript-eslint strict) + Prettier.
-- Zero runtime dependencies in the engine. Dev dependencies only.
+- Canvas 2D for the world, DOM overlay for UI widgets.
+- Vitest + fast-check (property tests), happy-dom for DOM tests. ESLint (typescript-eslint strict) + Prettier.
+- Zero runtime dependencies in the engine.
 
 ## Commands
 
 - `pnpm dev`: serve `examples/hello`.
-- `pnpm build`: engine bundles into `engine/dist/`.
-- `pnpm test`: Vitest, all packages. `pnpm -F engine test` for the engine only.
-- `pnpm typecheck`, `pnpm lint`, `pnpm format`.
+- `pnpm build`: `vite build`, then `gen` (manifest, schema, docs), then the 60 KB gzip size check.
+- `pnpm -F engine gen`: regenerate `dist/behaviors.manifest.json`, `dist/game.schema.json`, `docs/behaviors.md`.
+- `pnpm test` (all), `pnpm -F engine test` (engine only).
+- `pnpm typecheck`, `pnpm lint` (root script; `pnpm -r lint` finds nothing), `pnpm format`.
+- Before every commit: `pnpm -r typecheck && pnpm lint && pnpm -r test && pnpm --filter engine build`.
 
 ## Code style
 
-- No `any`. Use `unknown` and narrow it. No non-null `!` unless an invariant is commented.
-- Rules, state transitions and validation are **pure functions**: input in, new value out. Side effects live at the edges (`io/`, `ui/`, the renderer).
-- No module-level mutable state. No globals. Pass dependencies in.
-- No `Math.random()`. All randomness goes through the seeded RNG (mulberry32), whose state is serializable.
-- No `Date.now()`, `performance.now()` or timers inside simulation code. Simulation time is the tick count (fixed 60 Hz step). Only the loop driver reads the real clock.
-- No `console.log`. Use the `error` event or the debug overlay.
-- No TODO without a linked issue number.
-- Plain JSON-serializable state so it can be compared with `toEqual` and saved.
-- Naming: `kebab-case` ids in game data, `camelCase` in code, `PascalCase` types.
+- No `any`. Use `unknown` and narrow it. Game JSON is `Json` / `JsonObject` from `types.ts`.
+- Rules, validation and geometry are plain functions. Side effects live in `io/`, `ui/` and `core/game.ts`.
+- No module-level mutable state. Registries are built by `createRegistry()`.
+- No `Math.random()`. All randomness uses the seeded mulberry32 `sim.rng`. ESLint enforces this.
+- No `Date.now()` or `performance.now()` in simulation code. Time is `sim.tick` (60 Hz, `DT = 1/60`). Only `core/game.ts` reads the clock.
+- No `console.*`. Report problems with `sim.error(code, message, path?)`, which emits the `error` event once.
+- Never write game strings with `innerHTML` (a test enforces it).
+- State must be plain JSON so it compares with `toEqual`.
+- Game data ids are `kebab-case`. Code is `camelCase`, types `PascalCase`.
+- No TODO without an issue number.
+
+## Coordinates
+
+Scene units are pixels, origin top-left. Entity `x, y` is the center of the thing. Colliders and sprites extend half their size around it. Draw order: `layer`, then `y`, then id (see design.md deviation 1).
 
 ## Budgets and support
 
-- Engine core bundle: under **60 KB gzip**. Check after each feature.
-- Browsers: latest Chrome, Firefox, Safari.
-- Target 60 fps with a few hundred entities.
+- Engine bundle under 60 KB gzip (now about 21 KB). 60 fps with 500 entities.
+- Latest Chrome, Firefox, Safari.
 
 ## Commits
 
-Small commits, plain imperative messages ("Add world query by tag"). No attribution trailers. Never add `.kiro` to any `.gitignore`.
+Small, plain imperative messages. No attribution trailers. Never add `.kiro` to a `.gitignore`.
